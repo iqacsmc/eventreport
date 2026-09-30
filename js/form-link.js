@@ -6,7 +6,7 @@
  * (Google does not allow file uploads to be pre-filled).
  *
  * The question IDs and option texts below were read from the live form on
- * 30 September 2026. If the form's questions or options are edited later, the
+ * 30 September 2026 (themes re-checked the same afternoon). If the form's questions or options are edited later, the
  * matching entry here must be updated too (option texts must match exactly).
  */
 window.SMC_COLLEGE_FORM = {
@@ -103,9 +103,9 @@ window.SMC_COLLEGE_FORM = {
       '1.1.3 - Employability (As part of Curriculum)', '1.1.3 - Entrepreneurship (As part of Curriculum)',
       '1.1.3 - Skill Development (As part of Curriculum) - Only Knowledge',
       '1.1.3 - Skill Development (As part of Curriculum) - Knowledge & Practical Skills',
-      '1.3.2 - Value-added Course', '1.3.1 Professional Ethics ( As part of the Curriculum)',
-      '1.3.1 Gender (As part of the Curriculum)', '1.3.1 Human Values ( As part of the Curriculum)',
-      '1.3.1 Environment and Sustainability (As part of the Curriculum)',
+      '1.3.2 - Value-added Course', '1.3.1 - Professional Ethics ( As part of the Curriculum)',
+      '1.3.1 - Gender (As part of the Curriculum)', '1.3.1 - Human Values ( As part of the Curriculum)',
+      '1.3.1 - Environment and Sustainability (As part of the Curriculum)',
       '2.2.1 - Programme for Slow Learners', '2.2.1 - Programme for Advanced Learners',
       '2.2.1 - Programme for Differential Learners', '2.3.1 - Experiential Learning',
       '2.3.1 - Participatory Learning', '2.3.1 - Problem Solving', '3.3.1 - Innovation',

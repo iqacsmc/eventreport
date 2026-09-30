@@ -251,3 +251,7 @@ input[type=text], input[type=date], select, textarea { font-family: var(--font-r
 .check-grid label { font-weight: 400; margin: 0; display: flex; gap: .45rem; align-items: flex-start; font-size: .88rem; line-height: 1.35; padding: .2rem 0; cursor: pointer; }
 .check-grid input { margin-top: .15rem; accent-color: var(--brand); flex: none; }
 #sec-college select { text-overflow: ellipsis; }
+
+/* ---------- field errors ---------- */
+.field-error { display: block; color: var(--danger); font-size: .8rem; margin-top: .3rem; }
+.pickers.invalid { outline: 2px solid var(--danger); outline-offset: 3px; border-radius: 8px; }

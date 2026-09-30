@@ -537,21 +537,88 @@
     $('#fileName').value = (parts.length ? parts.join('_') : 'Event_Report') + '.docx';
   }
 
+  // ---------------------------------------------------------------- validation
+  const COURSE_CODE_RE = /^\d{2}[A-Z]{2,5}\/[A-Z]{2,5}\/[A-Z0-9]{2,8}$/;
+  function isAllCaps(v) {
+    // shouting check that ignores short acronyms such as IQAC or NSS
+    const long = String(v || '').split(/[^A-Za-z]+/).filter(w => w.length >= 5);
+    return long.length > 0 && long.every(w => w === w.toUpperCase());
+  }
+  function normaliseMobile(v) {
+    let d = String(v || '').replace(/[\s\-().]/g, '');
+    d = d.replace(/^\+?91(?=\d{10}$)/, '').replace(/^0(?=\d{10}$)/, '');
+    return d;
+  }
+  // Each check returns an error message, or '' when the value is fine. Empty optional fields pass.
+  const CHECKS = {
+    participants: v => !v ? '' : (/^\d+$/.test(v) && Number(v) > 0 ? '' : 'Enter the number of participants in digits, e.g. 241.'),
+    eventName: v => isAllCaps(v) ? 'Please don’t type the name in capital letters, e.g. A Two-Day Workshop on Data Analytics.' : '',
+    cfFacultyName: v => isAllCaps(v) ? 'Please don’t type the name in capital letters, e.g. Dr. Rebecca Devaprasad.' : '',
+    cfFacultyMobile: v => !v ? '' : (/^[6-9]\d{9}$/.test(normaliseMobile(v)) ? '' : 'Enter a 10-digit mobile number, e.g. 9876543210.'),
+    cfCourseCodes: v => !v ? '' : (v.split(',').map(x => x.trim().toUpperCase()).filter(Boolean).every(x => COURSE_CODE_RE.test(x)) ? '' : 'Use the format 23CS/MC/CN55. Separate several codes with commas.'),
+    courseCode: v => !v ? '' : (v.split(',').map(x => x.trim().toUpperCase()).filter(Boolean).every(x => COURSE_CODE_RE.test(x)) ? '' : 'Use the format 23CS/MC/CN55.')
+  };
+  // tidy values once the person leaves the field
+  const TIDY = {
+    cfFacultyMobile: v => { const d = normaliseMobile(v); return /^\d{10}$/.test(d) ? d : v; },
+    cfCourseCodes: v => v.split(',').map(x => x.trim().toUpperCase()).filter(Boolean).join(', '),
+    courseCode: v => v.split(',').map(x => x.trim().toUpperCase()).filter(Boolean).join(', ')
+  };
+
+  function fieldError(el, msg) {
+    const host = el.closest('.field') || el.parentNode;
+    let err = host.querySelector(':scope > .field-error');
+    el.classList.toggle('invalid', !!msg);
+    if (msg) {
+      if (!err) { err = document.createElement('small'); err.className = 'field-error'; host.appendChild(err); }
+      err.textContent = msg;
+    } else if (err) err.remove();
+  }
+
+  /** Checks the given ids. `required` ids must be filled. Returns the first bad element, or null. */
+  function validate(ids, required) {
+    let first = null;
+    ids.forEach(id => {
+      const el = $('#' + id); if (!el) return;
+      const v = el.value.trim();
+      let msg = '';
+      if (required.includes(id) && !v) msg = el.tagName === 'SELECT' ? 'Please choose one.' : 'This is required.';
+      else if (CHECKS[id]) msg = CHECKS[id](v);
+      fieldError(el, msg);
+      if (msg && !first) first = el;
+    });
+    return first;
+  }
+
+  function goTo(el, message) {
+    setStatus(message, 'error');
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (el.focus) el.focus({ preventScroll: true });
+  }
+
+  function initValidation() {
+    Object.keys(CHECKS).forEach(id => {
+      const el = $('#' + id); if (!el) return;
+      el.addEventListener('blur', () => {
+        const v = el.value.trim();
+        if (TIDY[id] && v && !CHECKS[id](TIDY[id](v))) el.value = TIDY[id](v);
+        fieldError(el, CHECKS[id](el.value.trim()));
+      });
+    });
+    // clear an error as soon as the person starts fixing it
+    document.addEventListener('input', e => { if (e.target.classList && e.target.classList.contains('invalid')) fieldError(e.target, ''); });
+    document.addEventListener('change', e => {
+      if (e.target.tagName === 'SELECT' && e.target.value) fieldError(e.target, '');
+      if (e.target.closest && e.target.closest('#cfPickers')) $('#cfPickers').classList.remove('invalid');
+    });
+  }
+
   // ---------------------------------------------------------------- generate
   async function generate(e) {
     e.preventDefault();
     const required = ['eventName', 'organisedBy', 'dateFrom', 'dateTo', 'dateText', 'participants'];
-    let firstBad = null;
-    required.forEach(id => {
-      const el = $('#' + id); const bad = !el.value.trim();
-      el.classList.toggle('invalid', bad);
-      if (bad && !firstBad) firstBad = el;
-    });
-    if (firstBad) {
-      setStatus('Please fill in the event details marked *.', 'error');
-      firstBad.scrollIntoView({ behavior: 'smooth', block: 'center' }); firstBad.focus({ preventScroll: true });
-      return;
-    }
+    const firstBad = validate(required.concat($('#curricular').checked ? ['courseCode'] : []), required);
+    if (firstBad) { goTo(firstBad, 'Please correct the highlighted field before generating the report.'); return; }
     const data = buildData();
     const missing = [];
     if (!data.objectives.length) missing.push('objectives');
@@ -590,14 +657,14 @@
     const val = id => $('#' + id).value.trim();
     const groups = {};
     CF_GROUPS.forEach(g => { groups[g] = $$('.check-grid[data-group="' + g + '"] input:checked').map(i => i.value); });
-    const codes = val('cfCourseCodes') || ($('#curricular').checked ? val('courseCode') : '');
+    const codes = TIDY.cfCourseCodes(val('cfCourseCodes') || ($('#curricular').checked ? val('courseCode') : ''));
     return {
       academicYear: window.SMCForm.academicYearOption(val('academicYear')),
       eventName: val('eventName'),
       startDate: val('dateFrom'),
       endDate: val('dateTo') || val('dateFrom'),
       facultyName: val('cfFacultyName'),
-      facultyMobile: val('cfFacultyMobile'),
+      facultyMobile: normaliseMobile(val('cfFacultyMobile')),
       level: val('cfLevel'),
       mode: val('cfMode'),
       departments: groups.departments, centres: groups.centres, clubs: groups.clubs, units: groups.units,
@@ -643,6 +710,19 @@
     // build the link at the moment of clicking so it carries the latest details
     ['#btnForm'].forEach(sel => $(sel).addEventListener('click', e => {
       const a = e.currentTarget;
+      // the college form needs these; check them here so nothing is missed there
+      const required = ['cfFacultyName', 'cfFacultyMobile', 'cfLevel', 'cfMode', 'cfMou', 'cfAlumnae', 'cfFmm150', 'cfCategory', 'cfTheme'];
+      const eventBad = validate(['eventName', 'dateFrom', 'dateTo'], ['eventName', 'dateFrom', 'dateTo']);
+      const formBad = validate(required.concat(['cfCourseCodes']), required);
+      const noOrganiser = !$$('#cfPickers input:checked').length;
+      $('#cfPickers').classList.toggle('invalid', noOrganiser);
+      if (eventBad || formBad || noOrganiser) {
+        e.preventDefault();
+        if (eventBad) goTo(eventBad, 'Please fill in the event name and dates in step 1 first.');
+        else if (formBad) goTo(formBad, 'Please complete the highlighted fields before opening the college form.');
+        else goTo($('#cfPickers'), 'Please tick at least one organising department, centre, club or unit.');
+        return;
+      }
       a.href = window.SMCForm.buildPrefillUrl(formValues());
       setStatus('College form opened in a new tab with your details filled in. Check the answers, attach the report, then submit.', 'ok');
     }));
@@ -686,6 +766,7 @@
     courseCodesTouched = false; updatePickCounts();
     fileNameTouched = false; updateFileName();
     $$('.invalid').forEach(el => el.classList.remove('invalid'));
+    $$('.field-error').forEach(el => el.remove());
     setStatus(''); changed(); dirty = false;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -729,6 +810,7 @@
     window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
     initNavHighlight();
     initCollegeForm();
+    initValidation();
 
     if (!window.JSZip || !window.SMC_TEMPLATE_B64) setStatus('A required file did not load. Please make sure the lib/ and js/ folders were uploaded.', 'error');
     dirty = false;

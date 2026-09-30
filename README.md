@@ -42,6 +42,15 @@ The downloaded report is named by the form's rule, `AcademicYear_Organiser_Event
 
 The question IDs and option texts are stored in `js/form-link.js`. They were read from the live form on 30 September 2026. If someone later edits the form, for example by adding a new theme, adding a department or renaming an option, update the matching list in that file. Option texts must match the form exactly, including spaces and punctuation. A new question that isn't in the file is simply left blank for the person to fill in.
 
+## Checks before generating and opening the form
+
+- **Generate Word Report** needs the event details marked \*. It also checks that *Number of Participants* is a number, that the event name isn't typed in all capitals, and that any course code follows the 23CS/MC/CN55 format.
+- **Open College Event Entry Form** needs the event name and dates, every field marked \* in step 12, and at least one organising department, centre, club or unit. It also checks that:
+  - the mobile number has 10 digits (+91, a leading 0, spaces and hyphens are removed automatically)
+  - the faculty name isn't typed in all capitals
+  - course codes follow the 23CS/MC/CN55 format (they're changed to capitals automatically)
+- A problem is shown in red under the field, and the page scrolls to it.
+
 ## Tips
 
 - **Bold and italic text:** in any text box, type `**bold**` or `*italic*`.

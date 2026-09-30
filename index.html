@@ -72,7 +72,7 @@
           </div>
           <div class="field">
             <label for="organisedBy">Organised By <span class="req">*</span></label>
-            <textarea id="organisedBy" name="organisedBy" rows="3" placeholder="e.g. Department of Computer Science&#10;Stella Maris College (Autonomous)"></textarea>
+            <textarea id="organisedBy" name="organisedBy" rows="3" placeholder="e.g. Internal Quality Assurance Cell&#10;Stella Maris College (Autonomous)"></textarea>
           </div>
           <div class="grid three dates">
             <div class="field">
@@ -261,21 +261,21 @@
           <p class="hint">Fill these, open the college form, then attach the Word report there and submit. Event name, dates and academic year are taken from above.</p>
           <div class="grid two">
             <div class="field">
-              <label for="cfFacultyName">Name of the Faculty-in-charge</label>
-              <input type="text" id="cfFacultyName" placeholder="e.g. Dr. Sr. Stella Mary">
+              <label for="cfFacultyName">Name of the Faculty-in-charge <span class="req">*</span></label>
+              <input type="text" id="cfFacultyName" placeholder="e.g. Dr. Rebecca Devaprasad">
             </div>
             <div class="field">
-              <label for="cfFacultyMobile">Mobile Number of the Faculty-in-charge</label>
-              <input type="text" id="cfFacultyMobile" inputmode="tel" placeholder="e.g. 98xxxxxxxx">
+              <label for="cfFacultyMobile">Mobile Number of the Faculty-in-charge <span class="req">*</span></label>
+              <input type="text" id="cfFacultyMobile" inputmode="numeric" maxlength="15" placeholder="10-digit mobile number">
             </div>
           </div>
           <div class="grid two">
-            <div class="field"><label for="cfLevel">Level of the Event</label><select id="cfLevel" data-opts="level"></select></div>
-            <div class="field"><label for="cfMode">Mode of the Event</label><select id="cfMode" data-opts="mode"></select></div>
+            <div class="field"><label for="cfLevel">Level of the Event <span class="req">*</span></label><select id="cfLevel" data-opts="level"></select></div>
+            <div class="field"><label for="cfMode">Mode of the Event <span class="req">*</span></label><select id="cfMode" data-opts="mode"></select></div>
           </div>
           <div class="field">
-            <label>Organised by <span class="muted">— select all that apply</span></label>
-            <div class="pickers">
+            <label>Organised by <span class="req">*</span> <span class="muted">— select all that apply</span></label>
+            <div class="pickers" id="cfPickers">
               <details class="picker"><summary>Departments <span class="pick-count" data-for="departments"></span></summary><div class="check-grid" data-group="departments"></div></details>
               <details class="picker"><summary>Centres <span class="pick-count" data-for="centres"></span></summary><div class="check-grid" data-group="centres"></div></details>
               <details class="picker"><summary>Clubs <span class="pick-count" data-for="clubs"></span></summary><div class="check-grid" data-group="clubs"></div></details>
@@ -283,15 +283,15 @@
             </div>
           </div>
           <div class="grid three">
-            <div class="field"><label for="cfMou">Part of an MoU?</label><select id="cfMou" data-opts="yesNo"></select></div>
-            <div class="field"><label for="cfAlumnae">Engagement with alumnae?</label><select id="cfAlumnae" data-opts="yesNo"></select></div>
-            <div class="field"><label for="cfFmm150">FMM 150th Year initiative?</label><select id="cfFmm150" data-opts="yesNo"></select></div>
+            <div class="field"><label for="cfMou">Part of an MoU? <span class="req">*</span></label><select id="cfMou" data-opts="yesNo"></select></div>
+            <div class="field"><label for="cfAlumnae">Engagement with alumnae? <span class="req">*</span></label><select id="cfAlumnae" data-opts="yesNo"></select></div>
+            <div class="field"><label for="cfFmm150">FMM 150th Year initiative? <span class="req">*</span></label><select id="cfFmm150" data-opts="yesNo"></select></div>
           </div>
-          <div class="field"><label for="cfCategory">Category of the Event</label><select id="cfCategory" data-opts="category"></select></div>
-          <div class="field"><label for="cfTheme">Theme of the Event</label><select id="cfTheme" data-opts="theme"></select></div>
+          <div class="field"><label for="cfCategory">Category of the Event <span class="req">*</span></label><select id="cfCategory" data-opts="category"></select></div>
+          <div class="field"><label for="cfTheme">Theme of the Event <span class="req">*</span></label><select id="cfTheme" data-opts="theme"></select></div>
           <div class="field">
-            <label for="cfCourseCodes">Course code(s) <span class="muted">— if part of the curriculum</span></label>
-            <input type="text" id="cfCourseCodes" placeholder="e.g. 23CS/MC/CN55">
+            <label for="cfCourseCodes">Course Code(s) <span class="muted">(optional)</span></label>
+            <input type="text" id="cfCourseCodes" placeholder="e.g. 23CS/MC/CN55 — separate several codes with commas">
           </div>
           <div class="step-actions"><a class="btn primary" id="btnForm" href="#" target="_blank" rel="noopener">Open College Event Entry Form</a></div>
         </section>
