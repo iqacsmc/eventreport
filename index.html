@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SMC Event Report Generator and Uploader</title>
+  <meta name="description" content="Fill in event details, upload the invite, photographs, participant list, certificate, feedback and signature, and download a formatted Stella Maris College event report (.docx).">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <img src="assets/smc-logo.png" alt="Stella Maris College (Autonomous), Chennai, India" class="brand-logo">
+        <h1>Event Report Generator and Uploader</h1>
+      </div>
+      <div class="top-actions">
+        <button type="button" class="btn top" id="btnSaveDraft" title="Download the text you have typed as a small file">Save draft</button>
+        <label class="btn top" title="Open a draft file you saved earlier">Open draft
+          <input type="file" id="draftFile" accept=".json,application/json" hidden>
+        </label>
+        <button type="button" class="btn top" id="btnReset">Clear form</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="privacy-note">
+    Nothing you enter is stored. Use <strong>Save draft</strong> to keep your text for later.
+  </div>
+
+  <div class="layout">
+    <nav class="side-nav" aria-label="Report sections">
+      <ol id="navList">
+        <li><a href="#sec-details">Event details</a></li>
+        <li><a href="#sec-invite">Invite</a></li>
+        <li><a href="#sec-objectives">Objectives</a></li>
+        <li><a href="#sec-description">Description</a></li>
+        <li><a href="#sec-outcomes">Outcomes</a></li>
+        <li><a href="#sec-photos">Photographs</a></li>
+        <li><a href="#sec-participants">Participant list</a></li>
+        <li><a href="#sec-certificate">Certificate</a></li>
+        <li><a href="#sec-feedback">Feedback</a></li>
+        <li><a href="#sec-signature">Signature</a></li>
+        <li><a href="#sec-generate">Generate report</a></li>
+        <li><a href="#sec-college">College form</a></li>
+      </ol>
+    </nav>
+
+    <main>
+      <form id="reportForm" autocomplete="off" novalidate>
+
+        <!-- 1. DETAILS -->
+        <section class="card" id="sec-details">
+          <h2><span class="num">1</span>Event Details</h2>
+          <div class="grid two">
+            <div class="field">
+              <label for="academicYear">Academic Year <span class="req">*</span></label>
+              <select id="academicYear" name="academicYear"></select>
+            </div>
+            <div class="field">
+              <label for="participants">Number of Participants <span class="req">*</span></label>
+              <input type="text" id="participants" name="participants" inputmode="numeric" placeholder="e.g. 241">
+            </div>
+          </div>
+          <div class="field">
+            <label for="eventName">Name of the Event <span class="req">*</span></label>
+            <input type="text" id="eventName" name="eventName" placeholder="e.g. Professional Development Programme">
+          </div>
+          <div class="field">
+            <label for="organisedBy">Organised By <span class="req">*</span></label>
+            <textarea id="organisedBy" name="organisedBy" rows="3" placeholder="e.g. Department of Computer Science&#10;Stella Maris College (Autonomous)"></textarea>
+          </div>
+          <div class="grid three">
+            <div class="field">
+              <label for="dateFrom">Date (from) <span class="req">*</span></label>
+              <input type="date" id="dateFrom">
+            </div>
+            <div class="field">
+              <label for="dateTo">Date (to) <span class="req">*</span></label>
+              <input type="date" id="dateTo">
+            </div>
+            <div class="field">
+              <label for="dateText">Date as it will appear in the report <span class="req">*</span></label>
+              <input type="text" id="dateText" name="date" placeholder="e.g. 01 – 24 September 2026">
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. INVITE -->
+        <section class="card" id="sec-invite">
+          <h2><span class="num">2</span>Invite / Brochure <span class="muted small">— optional</span></h2>
+          <p class="hint">Drag the thumbnails to set the order.</p>
+          <div class="dropzone" data-target="invites" data-accept="image,pdf" tabindex="0">
+            <input type="file" accept="image/*,application/pdf" multiple hidden>
+            <div class="dz-text"><strong>Choose files</strong> or drag them here<br><span>JPG, PNG or PDF</span></div>
+          </div>
+          <div class="thumbs" id="list-invites"></div>
+          <div class="field">
+            <label for="inviteCaption">Caption</label>
+            <input type="text" id="inviteCaption" name="inviteCaption" value="Invite of the Event">
+          </div>
+        </section>
+
+        <!-- 3. OBJECTIVES -->
+        <section class="card" id="sec-objectives">
+          <h2><span class="num">3</span>Objectives of the Event</h2>
+          <label class="switch">
+            <input type="checkbox" id="curricular">
+            <span>This event is part of the curriculum (add Course Title, Code and PO / PSO / CO)</span>
+          </label>
+          <div id="courseBlock" class="course-block" hidden>
+            <div class="grid two">
+              <div class="field">
+                <label for="courseTitle">Course Title</label>
+                <input type="text" id="courseTitle" name="courseTitle" placeholder="e.g. Computer Networks">
+              </div>
+              <div class="field">
+                <label for="courseCode">Course Code</label>
+                <input type="text" id="courseCode" name="courseCode" placeholder="e.g. 23CS/MC/CN55">
+              </div>
+            </div>
+            <div class="field">
+              <label for="courseOutcomes">PO / PSO / CO (number and statement)</label>
+              <textarea id="courseOutcomes" name="courseOutcomes" rows="3" placeholder="e.g. CO2: Explain the functions of each layer of the OSI reference model&#10;One per line"></textarea>
+            </div>
+          </div>
+          <div class="field">
+            <label for="objectivesIntro">Lead-in sentence <span class="muted">— optional</span></label>
+            <input type="text" id="objectivesIntro" name="objectivesIntro" placeholder="e.g. The programme aimed:">
+          </div>
+          <div class="field">
+            <label for="objectives">Objectives <span class="req">*</span></label>
+            <textarea id="objectives" name="objectives" rows="5" placeholder="One objective per line — each becomes a bullet point&#10;To familiarise …&#10;To enhance …"></textarea>
+          </div>
+        </section>
+
+        <!-- 4. DESCRIPTION -->
+        <section class="card" id="sec-description">
+          <h2><span class="num">4</span>Description of the Event <span class="counter" id="descCount">0 words</span></h2>
+          <div class="field">
+            <label for="descIntro">Description</label>
+            <textarea id="descIntro" name="descIntro" rows="7" placeholder="The Department of … organised … on … The programme commenced with …"></textarea>
+          </div>
+          <div id="sessions" class="stack"></div>
+          <button type="button" class="btn small" id="addSession">+ Add a session / resource person</button>
+          <div class="field" style="margin-top:1rem">
+            <label for="descClosing">Closing paragraph <span class="muted">— optional (e.g. vote of thanks)</span></label>
+            <textarea id="descClosing" name="descClosing" rows="3"></textarea>
+          </div>
+        </section>
+
+        <!-- 5. OUTCOMES -->
+        <section class="card" id="sec-outcomes">
+          <h2><span class="num">5</span>Outcomes of the Event <span class="counter" id="outCount">0 words</span></h2>
+          <div class="field">
+            <label for="outcomesIntro">Lead-in sentence <span class="muted">— optional</span></label>
+            <input type="text" id="outcomesIntro" name="outcomesIntro" value="By the end of the programme, the participants were able to">
+          </div>
+          <div class="field">
+            <label for="outcomes">Outcomes <span class="req">*</span></label>
+            <textarea id="outcomes" name="outcomes" rows="5" placeholder="One outcome per line — each becomes a bullet point"></textarea>
+          </div>
+        </section>
+
+        <!-- 6. PHOTOS -->
+        <section class="card" id="sec-photos">
+          <h2><span class="num">6</span>Photographs</h2>
+          <p class="hint">Add a caption for each photograph. Drag to change the order.</p>
+          <div class="field">
+            <label for="photoHeading">Section heading</label>
+            <select id="photoHeading" name="photoHeading">
+              <option>Geotagged Photographs</option>
+              <option>Photographs</option>
+            </select>
+          </div>
+          <div class="dropzone" data-target="photos" data-accept="image" tabindex="0">
+            <input type="file" accept="image/*" multiple hidden>
+            <div class="dz-text"><strong>Choose photographs</strong> or drag them here<br><span>JPG or PNG</span></div>
+          </div>
+          <div class="photo-list" id="list-photos"></div>
+        </section>
+
+        <!-- 7. PARTICIPANTS -->
+        <section class="card" id="sec-participants">
+          <h2><span class="num">7</span>Participant List</h2>
+          <p class="hint">Signed attendance sheets. Drag to change the order.</p>
+          <div class="dropzone" data-target="participantPages" data-accept="image,pdf" tabindex="0">
+            <input type="file" accept="image/*,application/pdf" multiple hidden>
+            <div class="dz-text"><strong>Choose files</strong> or drag them here<br><span>JPG, PNG or PDF</span></div>
+          </div>
+          <div class="thumbs" id="list-participantPages"></div>
+          <div class="field">
+            <label for="participantNote">Note above the list <span class="muted">— optional</span></label>
+            <input type="text" id="participantNote" name="participantNote" placeholder="e.g. Participants from inside and outside the College">
+          </div>
+        </section>
+
+        <!-- 8. CERTIFICATE -->
+        <section class="card" id="sec-certificate">
+          <h2><span class="num">8</span>Sample Certificate <span class="muted small">— if applicable</span></h2>
+          <div class="dropzone" data-target="certificates" data-accept="image,pdf" tabindex="0">
+            <input type="file" accept="image/*,application/pdf" multiple hidden>
+            <div class="dz-text"><strong>Choose file</strong> or drag it here<br><span>JPG, PNG or PDF</span></div>
+          </div>
+          <div class="thumbs" id="list-certificates"></div>
+        </section>
+
+        <!-- 9. FEEDBACK -->
+        <section class="card" id="sec-feedback">
+          <h2><span class="num">9</span>Feedback on the Event</h2>
+          <p class="hint">Google Forms charts or scanned handwritten feedback.</p>
+          <div class="dropzone" data-target="feedbackPages" data-accept="image,pdf" tabindex="0">
+            <input type="file" accept="image/*,application/pdf" multiple hidden>
+            <div class="dz-text"><strong>Choose files</strong> or drag them here<br><span>JPG, PNG or PDF</span></div>
+          </div>
+          <div class="thumbs" id="list-feedbackPages"></div>
+          <div class="field">
+            <label for="feedbackText">Feedback summary <span class="muted">— optional</span></label>
+            <textarea id="feedbackText" name="feedbackText" rows="3" placeholder="e.g. 90.2% of the 173 respondents agreed that the programme met their expectations."></textarea>
+          </div>
+        </section>
+
+        <!-- 10. SIGNATURE -->
+        <section class="card" id="sec-signature">
+          <h2><span class="num">10</span>Signature</h2>
+          <p class="hint">Signature of the Head of the Department / Centre / Unit / Cell.</p>
+          <div id="signatories" class="stack"></div>
+          <div class="row-actions">
+            <button type="button" class="btn small" id="addSignatory">+ Add another signatory</button>
+            <label class="inline-opt"><input type="checkbox" id="boldSignName"> Name in bold</label>
+            <label class="inline-opt">Single signature on the
+              <select id="signatureAlign"><option value="left">left</option><option value="right">right</option></select>
+            </label>
+          </div>
+        </section>
+
+        <!-- 11. GENERATE -->
+        <section class="card" id="sec-generate">
+          <h2><span class="num">11</span>Generate Word Report</h2>
+          <div class="grid two">
+            <div class="field">
+              <label for="cfOrganiser">Organiser short name</label>
+              <input type="text" id="cfOrganiser" placeholder="e.g. IQAC or CS">
+            </div>
+            <div class="field">
+              <label for="fileName">File name</label>
+              <input type="text" id="fileName" placeholder="AcademicYear_Organiser_EventName.docx">
+            </div>
+          </div>
+          <p class="hint">Named as the college form asks: AcademicYear_Organiser_EventName.docx. You can edit it.</p>
+          <div class="step-actions"><button type="submit" class="btn primary" id="btnGenerate">Generate Word Report</button></div>
+        </section>
+
+        <!-- 12. COLLEGE FORM -->
+        <section class="card" id="sec-college">
+          <h2><span class="num">12</span>College Event Entry Form</h2>
+          <p class="hint">Fill these, open the college form, then attach the Word report there and submit. Event name, dates and academic year are taken from above.</p>
+          <div class="grid two">
+            <div class="field">
+              <label for="cfFacultyName">Name of the Faculty-in-charge</label>
+              <input type="text" id="cfFacultyName" placeholder="e.g. Dr. Sr. Stella Mary">
+            </div>
+            <div class="field">
+              <label for="cfFacultyMobile">Mobile Number of the Faculty-in-charge</label>
+              <input type="text" id="cfFacultyMobile" inputmode="tel" placeholder="e.g. 98xxxxxxxx">
+            </div>
+          </div>
+          <div class="grid two">
+            <div class="field"><label for="cfLevel">Level of the Event</label><select id="cfLevel" data-opts="level"></select></div>
+            <div class="field"><label for="cfMode">Mode of the Event</label><select id="cfMode" data-opts="mode"></select></div>
+          </div>
+          <div class="field">
+            <label>Organised by <span class="muted">— select all that apply</span></label>
+            <div class="pickers">
+              <details class="picker"><summary>Departments <span class="pick-count" data-for="departments"></span></summary><div class="check-grid" data-group="departments"></div></details>
+              <details class="picker"><summary>Centres <span class="pick-count" data-for="centres"></span></summary><div class="check-grid" data-group="centres"></div></details>
+              <details class="picker"><summary>Clubs <span class="pick-count" data-for="clubs"></span></summary><div class="check-grid" data-group="clubs"></div></details>
+              <details class="picker"><summary>Units (NCC, NSS, …) <span class="pick-count" data-for="units"></span></summary><div class="check-grid" data-group="units"></div></details>
+            </div>
+          </div>
+          <div class="grid three">
+            <div class="field"><label for="cfMou">Part of an MoU?</label><select id="cfMou" data-opts="yesNo"></select></div>
+            <div class="field"><label for="cfAlumnae">Engagement with alumnae?</label><select id="cfAlumnae" data-opts="yesNo"></select></div>
+            <div class="field"><label for="cfFmm150">FMM 150th Year initiative?</label><select id="cfFmm150" data-opts="yesNo"></select></div>
+          </div>
+          <div class="field"><label for="cfCategory">Category of the Event</label><select id="cfCategory" data-opts="category"></select></div>
+          <div class="field"><label for="cfTheme">Theme of the Event</label><select id="cfTheme" data-opts="theme"></select></div>
+          <div class="field">
+            <label for="cfCourseCodes">Course code(s) <span class="muted">— if part of the curriculum</span></label>
+            <input type="text" id="cfCourseCodes" placeholder="e.g. 23CS/MC/CN55">
+          </div>
+          <div class="step-actions"><a class="btn primary" id="btnForm" href="#" target="_blank" rel="noopener">Open College Event Entry Form</a></div>
+        </section>
+
+      </form>
+    </main>
+  </div>
+
+  <div id="status" class="status" role="status" aria-live="polite"></div>
+
+  <!-- templates -->
+  <template id="tpl-session">
+    <div class="sub-card session">
+      <div class="sub-head">
+        <input type="text" class="s-label" value="Session 1" aria-label="Session label">
+        <div class="sub-tools">
+          <button type="button" class="icon-btn up" title="Move up">↑</button>
+          <button type="button" class="icon-btn down" title="Move down">↓</button>
+          <button type="button" class="icon-btn del" title="Remove">✕</button>
+        </div>
+      </div>
+      <div class="grid two">
+        <div class="field"><label>Session title / topic</label><input type="text" class="s-title" placeholder="e.g. Institutional Ethos"></div>
+        <div class="field"><label>Resource person (name, designation, institution)</label><input type="text" class="s-speaker" placeholder="e.g. Dr. A. B., Professor, …"></div>
+      </div>
+      <div class="field"><label>What happened in this session</label><textarea class="s-text" rows="4"></textarea></div>
+    </div>
+  </template>
+
+  <template id="tpl-signatory">
+    <div class="sub-card signatory">
+      <div class="sub-head">
+        <strong class="sig-title">Signatory</strong>
+        <div class="sub-tools"><button type="button" class="icon-btn del" title="Remove">✕</button></div>
+      </div>
+      <div class="sig-grid">
+        <div class="sig-upload">
+          <div class="dropzone small sig-drop" data-accept="image" tabindex="0">
+            <input type="file" accept="image/*" hidden>
+            <div class="dz-text"><strong>Upload signature</strong><br><span>PNG / JPG</span></div>
+          </div>
+          <div class="sig-preview" hidden><img alt="Signature preview"><button type="button" class="icon-btn sig-clear" title="Remove signature">✕</button></div>
+        </div>
+        <div class="stack tight">
+          <div class="field"><label>Name</label><input type="text" class="g-name" placeholder="e.g. Dr. Rebecca Devaprasad"></div>
+          <div class="field"><label>Designation</label><input type="text" class="g-desig" placeholder="e.g. Head, Department of Computer Science"></div>
+          <div class="field"><label>Institution</label><input type="text" class="g-inst" value="Stella Maris College (Autonomous)"></div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+
+  <script src="lib/jszip.min.js"></script>
+  <script src="js/template.js"></script>
+  <script src="js/docx-builder.js"></script>
+  <script src="js/form-link.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
