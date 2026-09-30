@@ -60,7 +60,7 @@ body {
 /* ---------- layout ---------- */
 .layout {
   max-width: 1180px; margin: 0 auto; padding: 0 1rem 4rem;
-  display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 1.5rem;
+  display: grid; grid-template-columns: 235px minmax(0, 1fr); gap: 1.5rem;
 }
 .side-nav { position: sticky; top: 88px; align-self: start; font-size: .9rem; }
 .side-nav ol { list-style: none; margin: 0; padding: 0; counter-reset: s; }
@@ -102,6 +102,7 @@ code { background: var(--brand-soft); padding: 0 .25rem; border-radius: 3px; fon
 .grid { display: grid; gap: 0 1rem; }
 .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid.three.dates { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr); }
 .field { margin-bottom: .85rem; }
 .field label { display: block; font-weight: 600; font-size: .85rem; margin-bottom: .3rem; }
 .field small { display: block; color: var(--muted); font-size: .78rem; margin-top: .25rem; }
@@ -210,7 +211,7 @@ input:focus, select:focus, textarea:focus {
 }
 @media (max-width: 640px) {
   .topbar { position: static; }
-  .grid.two, .grid.three { grid-template-columns: 1fr; }
+  .grid.two, .grid.three, .grid.three.dates { grid-template-columns: 1fr; }
   .card { padding: 1rem; }
   .photo-item { grid-template-columns: 90px 1fr auto; }
   .photo-item img { width: 90px; height: 70px; }
